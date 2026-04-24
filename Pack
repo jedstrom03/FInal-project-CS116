@@ -7,4 +7,6 @@ public class Pack {
 
   
 } 
-public Pack
+public int getWeight(){
+  return weight 
+}
