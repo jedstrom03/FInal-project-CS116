@@ -1,6 +1,10 @@
 public class Pack {
-  private weight; 
-  private volume; 
+  private int weight; 
+  private int volume; 
+  private String companyName;
+  private String zone;
+  private String date,
 
   
 } 
+public Pack
