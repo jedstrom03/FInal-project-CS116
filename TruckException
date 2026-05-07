@@ -1,0 +1,5 @@
+public class TruckException extends Exception {
+    public TruckException(String message) {
+        super(message);
+    }
+}
