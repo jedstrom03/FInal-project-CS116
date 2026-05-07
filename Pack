@@ -3,7 +3,7 @@ public class Pack {
   private int volume; 
   private String companyName;
   private String zone;
-  private String date,
+  private String date;
 
   
 } 
