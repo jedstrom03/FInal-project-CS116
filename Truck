@@ -1,3 +1,21 @@
 public class Truck{
+  private int TruckID; 
+  private int currentWeight; 
+  private int currentVolume;
+  private String truckType;
+  private ArrayList<Pack> packages;
+
+  public static final String SMALL = "Small";
+  public static final String MEDIUM = "Medium";
+  public static final String LARGE = "Large";
+
+  public static final double SMALL_WEIGHT_LIMIT = 2000;
+  public static final double SMALL_VOLUME_LIMIT = 1000;
+
+  public static final double MEDIUM_WEIGHT_LIMIT = 4000;
+  public static final double MEDIUM_VOLUME_LIMIT = 2000;
+
+  public static final double LARGE_WEIGHT_LIMIT = 8000;
+  public static final double LARGE_VOLUME_LIMIT = 4000;
 
 }
