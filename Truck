@@ -7,7 +7,7 @@ public class Truck{
 
   public static final String SMALL = "Small";
   public static final String MEDIUM = "Medium";
-  public static final String LARGE = "Large";
+  public static final String LARGE = "Large"; 
 
   public static final double SMALL_WEIGHT_LIMIT = 2000;
   public static final double SMALL_VOLUME_LIMIT = 1000;
