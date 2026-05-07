@@ -2,9 +2,13 @@ public class Pack {
   private int weight; 
   private int volume; 
   private String companyName;
-  private String zone;
+  private String deliveryZone;
   private String date;
 
+  private final String DEFAULT_NAME = "Default Company";
+  private final String DEFAULT_ZONE = "A1";
+  private final int DEFAULT_WEIGHT = 1;
+  private final int DEFAULT_VOLUME = 1;
   
 } 
 public int getWeight(){
@@ -16,9 +20,71 @@ return volume;
 public String getCompanyName(){
 return companyName; 
 }
-public String getZone(){
-return zone;
+public String getDeliveryZone(){
+return deliveryZone;
 }
+
+
+
 public String getDate(){
 return date;
 }
+public Date getDeliveryDate() {
+        return new Date(deliveryDate.getMonth(), deliveryDate.getDay(), deliveryDate.getYear());
+    }
+public Pack() {
+        setCompanyName(DEFAULT_NAME);
+        setDeliveryZone(DEFAULT_ZONE);
+        setDate(new Date());
+        setWeight(DEFAULT_WEIGHT);
+        setVolume(DEFAULT_VOLUME);
+}
+public Pack(String n, String z, Date date, int w, int v) {
+        setCompanyName(n);
+        setDeliveryZone(z);
+        setDate(date);
+        setWeight(w);
+        setVolume(v);
+}
+
+public void setWeight(int num){
+ 
+        if (num > 0) {
+            weight = num;
+        } else {
+            weight = DEFAULT_WEIGHT;
+        }
+    }
+
+public void setVolume(int num) {
+        if (num > 0) {
+            volume = num;
+        } else {
+            volume = DEFAULT_VOLUME;
+        }
+}
+public void setDate(Date date) {
+        if (date != null) {
+            deliveryDate = new Date(date.getMonth(), date.getDay(), date.getYear());
+        } else {
+            deliveryDate = new Date();
+        }
+    }
+
+public void setCompanyName(String name) {
+        if (name != null) {
+            companyName = name;
+        } else {
+            companyName = DEFAULT_NAME;
+        }
+    }
+ public void setDeliveryZone(String zone) {
+        if (zone != null) {
+            deliveryZone = zone;
+        } else {
+            deliveryZone = DEFAULT_ZONE;
+        }
+    }
+public String toString() {
+        return " Company:" + companyName + " Zone:" + deliveryZone + " Date:" + deliveryDate.toString() + " Weight:" + weight + " Volume:" + volume;
+    }
