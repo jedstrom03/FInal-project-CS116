@@ -8,5 +8,17 @@ public class Pack {
   
 } 
 public int getWeight(){
-  return weight 
+  return weight; 
+}
+public int getVolume(){
+return volume; 
+}
+public String getCompanyName(){
+return companyName; 
+}
+public String getZone(){
+return zone;
+}
+public String getDate(){
+return date;
 }
