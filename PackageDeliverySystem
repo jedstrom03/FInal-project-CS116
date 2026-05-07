@@ -1,1 +1,227 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.io.*;
 
+public class PackageDeliverySystem {
+
+    public static final int SMALL_HOUR_COST  = 1;
+    public static final int MEDIUM_HOUR_COST = 2;
+    public static final int LARGE_HOUR_COST  = 3;
+
+    private ArrayList<Pack>  packages = new ArrayList<Pack>();
+    private ArrayList<Truck> trucks   = new ArrayList<Truck>();
+
+    public void addPackage(Pack p) { 
+        packages.add(p); 
+    }
+    public void addTruck(Truck t)  { 
+        trucks.add(t);   
+    }
+
+    // Assigns each package to a truck. Urgent packages go first (sorted by deadline),
+    // then regular packages (sorted by zone). Each package is added to the first truck
+    // that has room. If no truck fits, a new one is created.
+    public void assignPackages(PrintWriter log) {
+        ArrayList<Pack> ordered = getSortedPackages();
+
+        for (int i = 0; i < ordered.size(); i++) {
+            Pack p = ordered.get(i);
+            boolean assigned = false;
+
+            // Try to fit on an existing truck
+            for (int j = 0; j < trucks.size(); j++) {
+                try {
+                    if (trucks.get(j).addPackage(p)) {
+                        assigned = true;
+                        break;
+                    }
+                } catch (TruckException e) {
+                    if (log != null) log.println(e.getMessage());
+                }
+            }
+
+            // No existing truck fit so make a new one
+            if (!assigned) {
+                String newType = getTruckTypeFor(p);
+                if (newType != null) {
+                    try {
+                        Truck newTruck = new Truck(newType);
+                        trucks.add(newTruck);
+                        newTruck.addPackage(p);
+                        assigned = true;
+                    } catch (TruckException e) {
+                        if (log != null) log.println(e.getMessage());
+                    }
+                }
+                if (!assigned && log != null)
+                    log.println("UNASSIGNED, it is too large for any truck: " + p);
+            }
+        }
+    }
+
+    // Returns the smallest truck type that can hold the given package
+    private String getTruckTypeFor(Pack p) {
+        if (p.getWeight() <= Truck.SMALL_WEIGHT_LIMIT && p.getVolume() <= Truck.SMALL_VOLUME_LIMIT)
+            return "small";
+        if (p.getWeight() <= Truck.MEDIUM_WEIGHT_LIMIT && p.getVolume() <= Truck.MEDIUM_VOLUME_LIMIT)
+            return "medium";
+        if (p.getWeight() <= Truck.LARGE_WEIGHT_LIMIT && p.getVolume() <= Truck.LARGE_VOLUME_LIMIT)
+            return "large";
+        return null;
+    }
+
+    // Returns urgent packages sorted by deadline, followed by regular packages sorted by zone
+    private ArrayList<Pack> getSortedPackages() {
+        ArrayList<SpecPack> urgent  = new ArrayList<SpecPack>();
+        ArrayList<Pack>     regular = new ArrayList<Pack>();
+
+        for (int i = 0; i < packages.size(); i++) {
+            if (packages.get(i) instanceof SpecPack)
+                urgent.add((SpecPack) packages.get(i));
+            else
+                regular.add(packages.get(i));
+        }
+
+        // Sort urgent by deadline (insertion sort)
+        for (int i = 1; i < urgent.size(); i++) {
+            SpecPack key = urgent.get(i);
+            int j = i - 1;
+            while (j >= 0 && urgent.get(j).getDeadline() > key.getDeadline()) {
+                urgent.set(j + 1, urgent.get(j));
+                j--;
+            }
+            urgent.set(j + 1, key);
+        }
+
+        // Sort regular by zone (insertion sort)
+        for (int i = 1; i < regular.size(); i++) {
+            Pack key = regular.get(i);
+            int j = i - 1;
+            while (j >= 0 && regular.get(j).getZone().compareTo(key.getZone()) > 0) {
+                regular.set(j + 1, regular.get(j));
+                j--;
+            }
+            regular.set(j + 1, key);
+        }
+
+        ArrayList<Pack> ordered = new ArrayList<Pack>();
+        for (int i = 0; i < urgent.size();  i++) ordered.add(urgent.get(i));
+        for (int i = 0; i < regular.size(); i++) ordered.add(regular.get(i));
+        return ordered;
+    }
+
+    public double getTotalHours() {
+        double total = 0;
+        for (int i = 0; i < trucks.size(); i++) {
+            Truck t = trucks.get(i);
+            if (t.getPackages().isEmpty()) continue;
+            int multiplier = getHourCost(t.getTruckType());
+            total += multiplier * t.calculateHoursUsed();
+        }
+        return total;
+    }
+
+    public ArrayList<Pack> getUnassigned() {
+        ArrayList<Pack> unassigned = new ArrayList<Pack>();
+        for (int i = 0; i < packages.size(); i++) {
+            Pack p = packages.get(i);
+            boolean onTruck = false;
+            for (int j = 0; j < trucks.size(); j++) {
+                if (trucks.get(j).getPackages().contains(p)) {
+                    onTruck = true;
+                    break;
+                }
+            }
+            if (!onTruck) unassigned.add(p);
+        }
+        return unassigned;
+    }
+
+    private int getHourCost(String truckType) {
+        if (truckType.equals("small"))  return SMALL_HOUR_COST;
+        if (truckType.equals("medium")) return MEDIUM_HOUR_COST;
+        return LARGE_HOUR_COST;
+    }
+
+    // ===================== main =====================
+    public static void main(String[] args) throws IOException {
+        Scanner     kb  = new Scanner(System.in);
+        PrintWriter log = new PrintWriter(new FileWriter("log.txt", true));
+
+        System.out.print("Enter input file name: ");
+        String fileName = kb.nextLine().trim();
+
+        PackageDeliverySystem sys = new PackageDeliverySystem();
+
+        // Read packages from file
+        Scanner in = new Scanner(new File(fileName));
+        int lineNum = 0;
+        while (in.hasNextLine()) {
+            lineNum++;
+            String line = in.nextLine().trim();
+            if (line.isEmpty()) continue;
+            String[] parts = line.split(",");
+            if (parts.length < 6) { log.println("Line " + lineNum + ": too few fields"); continue; }
+
+            try {
+                String[] dateParts = parts[3].trim().split("/");
+                Date d = new Date(Integer.parseInt(dateParts[0]),
+                                  Integer.parseInt(dateParts[1]),
+                                  Integer.parseInt(dateParts[2]));
+                int weight = Integer.parseInt(parts[4].trim());
+                int volume = Integer.parseInt(parts[5].trim());
+                String type    = parts[0].trim().toUpperCase();
+                String company = parts[1].trim();
+                String zone    = parts[2].trim();
+
+                if (type.equals("R")) {
+                    sys.addPackage(new Pack(company, zone, d, weight, volume));
+                } else if (type.equals("S")) {
+                    int deadline = Integer.parseInt(parts[6].trim());
+                    sys.addPackage(new SpecPack(company, zone, d, weight, volume, deadline));
+                } else {
+                    log.println("Line " + lineNum + ": unknown type " + type);
+                }
+            } catch (Exception e) {
+                log.println("Line " + lineNum + ": " + e.getMessage());
+            }
+        }
+        in.close();
+
+        sys.assignPackages(log);
+
+        // Screen output
+        int small = 0, medium = 0, large = 0;
+        for (int i = 0; i < sys.trucks.size(); i++) {
+            String type = sys.trucks.get(i).getTruckType();
+            if (sys.trucks.get(i).getPackages().isEmpty()) continue;
+            if (type.equals("small"))       small++;
+            else if (type.equals("medium")) medium++;
+            else                            large++;
+        }
+        System.out.println("\nDelivery Summary");
+        System.out.println("Small trucks:  " + small);
+        System.out.println("Medium trucks: " + medium);
+        System.out.println("Large trucks:  " + large);
+        System.out.printf("Total truck hours: %.1f%n", sys.getTotalHours());
+
+        // Write deliveries.txt
+        PrintWriter out = new PrintWriter(new FileWriter("deliveries.txt"));
+        for (int i = 0; i < sys.trucks.size(); i++) {
+            Truck t = sys.trucks.get(i);
+            if (t.getPackages().isEmpty()) continue;
+            int cost = sys.getHourCost(t.getTruckType()) * t.calculateHoursUsed();
+            out.println(t + "  Truck Hours Cost: " + cost);
+            for (int j = 0; j < t.getPackages().size(); j++)
+                out.println("  " + t.getPackages().get(j));
+            out.println();
+        }
+        ArrayList<Pack> unassigned = sys.getUnassigned();
+        for (int i = 0; i < unassigned.size(); i++)
+            out.println("UNASSIGNED: " + unassigned.get(i));
+        out.close();
+
+        log.close();
+        kb.close();
+    }
+}
