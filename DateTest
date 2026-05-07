@@ -1,0 +1,34 @@
+public class DateTest {
+    public static void main(String[] args) {
+
+        // Test 1: default constructor
+        Date d1 = new Date();
+        System.out.println("Test 1 - Default: " + d1 + "  (expected 1/1/2000)");
+
+        // Test 2: valid non-default constructor
+        try {
+            Date d2 = new Date(3, 15, 2023);
+            System.out.println("Test 2 - Valid: " + d2 + "  (expected 3/15/2023)");
+        } catch (DateException e) {
+            System.out.println("Test 2 FAILED: " + e.getMessage());
+        }
+
+        // Test 3: invalid month should throw
+        try {
+            Date d3 = new Date(13, 1, 2023);
+            System.out.println("Test 3 FAILED - no exception thrown");
+        } catch (DateException e) {
+            System.out.println("Test 3 - Caught invalid month: " + e.getMessage());
+        }
+
+        // Test 4: deep copy - changing original should not change copy
+        try {
+            Date original = new Date(6, 10, 2023);
+            Date copy = new Date(original);
+            original.setMonth(1);
+            System.out.println("Test 4 - Copy unchanged: " + copy + "  (expected 6/10/2023)");
+        } catch (DateException e) {
+            System.out.println("Test 4 FAILED: " + e.getMessage());
+        }
+    }
+}

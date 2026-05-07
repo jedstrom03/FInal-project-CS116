@@ -1,0 +1,32 @@
+public class PackTest {
+    public static void main(String[] args) {
+
+        // Test 1: default constructor
+        Pack p1 = new Pack();
+        System.out.println("Test 1 - Default: " + p1);
+
+        // Test 2: valid non-default constructor
+        try {
+            Pack p2 = new Pack("Amazon", "K9", new Date(3, 15, 2023), 285, 160);
+            System.out.println("Test 2 - Valid: " + p2);
+        } catch (PackException | DateException e) {
+            System.out.println("Test 2 FAILED: " + e.getMessage());
+        }
+
+        // Test 3: invalid weight should throw
+        try {
+            Pack p3 = new Pack("Co", "A1", new Date(), 0, 10);
+            System.out.println("Test 3 FAILED - no exception thrown");
+        } catch (PackException e) {
+            System.out.println("Test 3 - Caught bad weight: " + e.getMessage());
+        }
+
+        // Test 4: invalid zone should throw
+        try {
+            Pack p4 = new Pack("Co", "ZZ", new Date(), 10, 10);
+            System.out.println("Test 4 FAILED - no exception thrown");
+        } catch (PackException e) {
+            System.out.println("Test 4 - Caught bad zone: " + e.getMessage());
+        }
+    }
+}

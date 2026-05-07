@@ -1,0 +1,36 @@
+public class SpecPackTest {
+    public static void main(String[] args) {
+
+        // Test 1: default constructor
+        SpecPack s1 = new SpecPack();
+        System.out.println("Test 1 - Default: " + s1 + "  (deadline should be 9)");
+
+        // Test 2: valid non-default constructor
+        try {
+            SpecPack s2 = new SpecPack("Apple", "Z8", new Date(3, 17, 2023), 328, 106, 11);
+            System.out.println("Test 2 - Valid: " + s2);
+        } catch (PackException | SpecPackException | DateException e) {
+            System.out.println("Test 2 FAILED: " + e.getMessage());
+        }
+
+        // Test 3: deadline too low should throw
+        try {
+            SpecPack s3 = new SpecPack("Co", "A1", new Date(), 10, 10, 8);
+            System.out.println("Test 3 FAILED - no exception thrown");
+        } catch (SpecPackException e) {
+            System.out.println("Test 3 - Caught low deadline: " + e.getMessage());
+        } catch (PackException e) {
+            System.out.println("Test 3 FAILED with wrong exception: " + e.getMessage());
+        }
+
+        // Test 4: deadline too high should throw
+        try {
+            SpecPack s4 = new SpecPack("Co", "B2", new Date(), 10, 10, 17);
+            System.out.println("Test 4 FAILED - no exception thrown");
+        } catch (SpecPackException e) {
+            System.out.println("Test 4 - Caught high deadline: " + e.getMessage());
+        } catch (PackException e) {
+            System.out.println("Test 4 FAILED with wrong exception: " + e.getMessage());
+        }
+    }
+}
