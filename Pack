@@ -4,6 +4,8 @@ public class Pack {
   private String companyName;
   private String deliveryZone;
   private String date;
+  private static int nextID = 0;
+  private int id;
 
   private final String DEFAULT_NAME = "Default Company";
   private final String DEFAULT_ZONE = "A1";
@@ -23,7 +25,9 @@ return companyName;
 public String getDeliveryZone(){
 return deliveryZone;
 }
-
+ public int getID() {
+        return id;
+    }
 
 
 public String getDate(){
@@ -38,6 +42,8 @@ public Pack() {
         setDate(new Date());
         setWeight(DEFAULT_WEIGHT);
         setVolume(DEFAULT_VOLUME);
+        nextID++;
+        id = nextID;
 }
 public Pack(String n, String z, Date date, int w, int v) {
         setCompanyName(n);
@@ -45,6 +51,8 @@ public Pack(String n, String z, Date date, int w, int v) {
         setDate(date);
         setWeight(w);
         setVolume(v);
+        nextID++;
+        id = nextID;
 }
 
 public void setWeight(int num){
@@ -86,5 +94,5 @@ public void setCompanyName(String name) {
         }
     }
 public String toString() {
-        return " Company:" + companyName + " Zone:" + deliveryZone + " Date:" + deliveryDate.toString() + " Weight:" + weight + " Volume:" + volume;
+        return "ID:" + id +" Company:" + companyName + " Zone:" + deliveryZone + " Date:" + deliveryDate.toString() + " Weight:" + weight + " Volume:" + volume;
     }
