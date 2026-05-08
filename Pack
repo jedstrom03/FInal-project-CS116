@@ -11,6 +11,7 @@ public class Pack {
   private final String DEFAULT_ZONE = "A1";
   private final int DEFAULT_WEIGHT = 1;
   private final int DEFAULT_VOLUME = 1;
+
   
 } 
 public int getWeight(){
