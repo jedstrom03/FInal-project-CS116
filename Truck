@@ -2,28 +2,7 @@
 import java.util.ArrayList;
 =======
 public class Truck{
-  private int TruckID; 
-  private int currentWeight; 
-  private int currentVolume;
-  private String truckType;
-  private ArrayList<Pack> packages;
->>>>>>> 93475d1dc48ed9f993563a6704cb43751d71c44f
-
-  public static final String SMALL = "Small";
-  public static final String MEDIUM = "Medium";
-  public static final String LARGE = "Large"; 
-
-  public static final double SMALL_WEIGHT_LIMIT = 2000;
-  public static final double SMALL_VOLUME_LIMIT = 1000;
-
-  public static final double MEDIUM_WEIGHT_LIMIT = 4000;
-  public static final double MEDIUM_VOLUME_LIMIT = 2000;
-
-  public static final double LARGE_WEIGHT_LIMIT = 8000;
-  public static final double LARGE_VOLUME_LIMIT = 4000;
-
-}
-
+  
     public static final int SMALL_WEIGHT_LIMIT  = 2000;
     public static final int SMALL_VOLUME_LIMIT  = 1000;
     public static final int MEDIUM_WEIGHT_LIMIT = 4000;
