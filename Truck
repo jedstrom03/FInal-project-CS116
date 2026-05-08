@@ -1,6 +1,5 @@
-<<<<<<< HEAD
 import java.util.ArrayList;
-=======
+
 public class Truck{
   
     public static final int SMALL_WEIGHT_LIMIT  = 2000;
