@@ -1,9 +1,13 @@
+<<<<<<< HEAD
+import java.util.ArrayList;
+=======
 public class Truck{
   private int TruckID; 
   private int currentWeight; 
   private int currentVolume;
   private String truckType;
   private ArrayList<Pack> packages;
+>>>>>>> 93475d1dc48ed9f993563a6704cb43751d71c44f
 
   public static final String SMALL = "Small";
   public static final String MEDIUM = "Medium";
@@ -18,4 +22,112 @@ public class Truck{
   public static final double LARGE_WEIGHT_LIMIT = 8000;
   public static final double LARGE_VOLUME_LIMIT = 4000;
 
+}
+
+    public static final int SMALL_WEIGHT_LIMIT  = 2000;
+    public static final int SMALL_VOLUME_LIMIT  = 1000;
+    public static final int MEDIUM_WEIGHT_LIMIT = 4000;
+    public static final int MEDIUM_VOLUME_LIMIT = 2000;
+    public static final int LARGE_WEIGHT_LIMIT  = 8000;
+    public static final int LARGE_VOLUME_LIMIT  = 4000;
+
+    private static final int STOPS_PER_HOUR = 5;
+
+    private static int nextTruckID = 1;
+
+    private String          truckID;
+    private String          truckType;
+    private int             weightLimit;
+    private int             volumeLimit;
+    private int             currentWeight;
+    private int             currentVolume;
+    private ArrayList<Pack> packages;
+
+    // Default constructor
+    public Truck() {
+        truckID = "T" + nextTruckID++;
+        try {
+            setTruckType("small");
+        } catch (TruckException e) {}
+        currentWeight = 0;
+        currentVolume = 0;
+        packages = new ArrayList<Pack>();
+    }
+
+    // Non-default constructor
+    public Truck(String truckType) throws TruckException {
+        truckID = "T" + nextTruckID++;
+        setTruckType(truckType);
+        currentWeight = 0;
+        currentVolume = 0;
+        packages = new ArrayList<Pack>();
+    }
+
+    public void setTruckType(String truckType) throws TruckException {
+        if (truckType.equals("small")) {
+            this.truckType   = "small";
+            this.weightLimit = SMALL_WEIGHT_LIMIT;
+            this.volumeLimit = SMALL_VOLUME_LIMIT;
+        } else if (truckType.equals("medium")) {
+            this.truckType   = "medium";
+            this.weightLimit = MEDIUM_WEIGHT_LIMIT;
+            this.volumeLimit = MEDIUM_VOLUME_LIMIT;
+        } else if (truckType.equals("large")) {
+            this.truckType   = "large";
+            this.weightLimit = LARGE_WEIGHT_LIMIT;
+            this.volumeLimit = LARGE_VOLUME_LIMIT;
+        } else {
+            throw new TruckException("Invalid truck type: " + truckType);
+        }
+    }
+
+    // Returns true if the package was added, false if it doesn't fit
+    public boolean addPackage(Pack p) throws TruckException {
+        if (p == null)
+            throw new TruckException("Cannot add a null package.");
+        if (currentWeight + p.getWeight() > weightLimit)
+            return false;
+        if (currentVolume + p.getVolume() > volumeLimit)
+            return false;
+        packages.add(p);
+        currentWeight += p.getWeight();
+        currentVolume += p.getVolume();
+        return true;
+    }
+
+    public int getRemainingWeight() {
+        return weightLimit - currentWeight;
+    }
+
+    public int getRemainingVolume() {
+        return volumeLimit - currentVolume;
+    }
+
+    // Hours used = number of packages / 5 stops per hour, rounded up
+    public int calculateHoursUsed() {
+        if (packages.isEmpty())
+            return 0;
+        int hours = (int) Math.ceil((double) packages.size() / STOPS_PER_HOUR);
+        if (hours > 8)
+            hours = 8;
+        return hours;
+    }
+
+    public String          getTruckID()       { return truckID;       }
+    public String          getTruckType()     { return truckType;     }
+    public int             getCurrentWeight() { return currentWeight; }
+    public int             getCurrentVolume() { return currentVolume; }
+    public ArrayList<Pack> getPackages()      { return packages;      }
+
+    public static String generateTruckID() {
+        return "T" + nextTruckID++;
+    }
+
+    public String toString() {
+        return "Truck " + truckID + " [" + truckType + "]"
+             + " W:" + currentWeight + "/" + weightLimit
+             + " V:" + currentVolume + "/" + volumeLimit
+             + " Packages:" + packages.size()
+             + " Hours:" + calculateHoursUsed();
+    }
 }
